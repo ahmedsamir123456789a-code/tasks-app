@@ -1,1 +1,21 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// كل مستخدم ليه مفتاح تخزين خاص بيه على حسب الـ userId بتاعه من Clerk
+const keyFor = (userId) => `tasks_${userId}`;
+
+export async function loadTasks(userId) {
+  try {
+    const raw = await AsyncStorage.getItem(keyFor(userId));
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+export async function saveTasks(userId, tasks) {
+  try {
+    await AsyncStorage.setItem(keyFor(userId), JSON.stringify(tasks));
+  } catch (err) {
+    // تجاهل الخطأ بصمت - ممكن تضيف تنبيه هنا لو حبيت
+  }
+}
